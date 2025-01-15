@@ -1,19 +1,27 @@
-variable "location" {
-  description = "The location for this resource to be put in"
-  type        = string
-}
+variable "security_policies" {
+  description = "The security policies to apply to the database"
+  type = list(object({
+    rg_name                    = string
+    server_name                = string
+    state                      = optional(string, "Enabled")
+    disabled_alerts            = optional(list(string), [])
+    email_account_admins       = optional(bool, false)
+    email_addresses            = optional(list(string), [])
+    retention_days             = optional(number, 0)
+    storage_account_access_key = optional(string)
+    storage_endpoint           = optional(string)
 
-variable "name" {
-  type        = string
-  description = "The name of the VNet gateway"
-}
+    vulnerability_assessment = optional(object({
+      enabled                    = optional(bool, false)
+      storage_container_path     = optional(string)
+      storage_account_access_key = optional(string)
+      storage_container_sas_key  = optional(string)
 
-variable "rg_name" {
-  description = "The name of the resource group, this module does not create a resource group, it is expecting the value of a resource group already exists"
-  type        = string
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "A map of the tags to use on the resources that are deployed with this module."
+      recurring_scans = optional(object({
+        enabled                   = optional(bool, true)
+        email_subscription_admins = optional(bool, false)
+        emails                    = optional(list(string), [])
+      }))
+    }))
+  }))
 }
